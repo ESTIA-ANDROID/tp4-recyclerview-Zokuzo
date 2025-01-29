@@ -37,4 +37,5 @@ object FakeApiServiceGenerator {
         User("024", "André", "https://api.adorable.io/AVATARS/512/24.png"),
         User("025", "Leopold", "https://api.adorable.io/AVATARS/512/25.png")
     )
+
 }
