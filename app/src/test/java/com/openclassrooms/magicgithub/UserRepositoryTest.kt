@@ -7,6 +7,7 @@ import com.openclassrooms.magicgithub.model.User
 import com.openclassrooms.magicgithub.repository.UserRepository
 import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -36,6 +37,7 @@ class UserRepositoryTest {
         )
     }
 
+
     @Test
     fun generateRandomUserWithSuccess() {
         val initialSize = userRepository.getUsers().size
@@ -51,8 +53,28 @@ class UserRepositoryTest {
 
     @Test
     fun deleteUserWithSuccess() {
+
         val userToDelete = userRepository.getUsers()[0]
+
+        // Désactiver l'utilisateur avant de le supprimer
+        userRepository.toggleUserActiveState(userToDelete)
+        assertFalse("L'utilisateur devrait être inactif avant suppression", userToDelete.isActive)
+
+        // Supprimer l'utilisateur
         userRepository.deleteUser(userToDelete)
         Assert.assertFalse(userRepository.getUsers().contains(userToDelete))
+    }
+
+    @Test
+    fun toggleUserActiveStateWithSuccess() {
+        val user = userRepository.getUsers()[0] // Récupérer un utilisateur existant
+
+        // Désactiver l'utilisateur
+        userRepository.toggleUserActiveState(user)
+        assertFalse("L'utilisateur devrait être inactif", user.isActive)
+
+        // Réactiver l'utilisateur
+        userRepository.toggleUserActiveState(user)
+        assertTrue("L'utilisateur devrait être actif", user.isActive)
     }
 }

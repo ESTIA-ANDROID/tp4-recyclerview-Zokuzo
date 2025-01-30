@@ -18,4 +18,9 @@ class UserRepository(
     fun deleteUser(user: User) {
         apiService.deleteUser(user)
     }
+
+    fun toggleUserActiveState(user: User) {
+        user.isActive = !user.isActive
+    }
+
 }
