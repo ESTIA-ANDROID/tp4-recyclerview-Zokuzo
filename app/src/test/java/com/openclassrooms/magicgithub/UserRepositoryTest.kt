@@ -65,6 +65,7 @@ class UserRepositoryTest {
         Assert.assertFalse(userRepository.getUsers().contains(userToDelete))
     }
 
+    //test de toggle
     @Test
     fun toggleUserActiveStateWithSuccess() {
         val user = userRepository.getUsers()[0] // Récupérer un utilisateur existant
@@ -76,5 +77,25 @@ class UserRepositoryTest {
         // Réactiver l'utilisateur
         userRepository.toggleUserActiveState(user)
         assertTrue("L'utilisateur devrait être actif", user.isActive)
+    }
+
+
+    //test de déplacement
+    @Test
+    fun moveUserWithSuccess() {
+        val fromIndex = 0
+        val toIndex = 1
+        val initialUsers = userRepository.getUsers().toMutableList()
+
+        // Ensure the initial state
+        assertEquals(initialUsers[fromIndex], userRepository.getUsers()[fromIndex])
+        assertEquals(initialUsers[toIndex], userRepository.getUsers()[toIndex])
+
+        // Move the user
+        userRepository.moveUser(fromIndex, toIndex)
+
+        // Verify the users have been swapped
+        assertEquals(initialUsers[fromIndex], userRepository.getUsers()[toIndex])
+        assertEquals(initialUsers[toIndex], userRepository.getUsers()[fromIndex])
     }
 }

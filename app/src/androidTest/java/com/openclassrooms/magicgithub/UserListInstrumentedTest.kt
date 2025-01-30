@@ -62,4 +62,35 @@ class UserListInstrumentedTest {
         Espresso.onView(ViewMatchers.withId(R.id.activity_list_user_rv))
             .check(ItemCount(currentUsersSize - 1))
     }
+
+    // AJOUT DES TESTS D'INTERFACES
+
+    //test de swipe
+    @Test
+    fun checkIfSwipeIsWorking() {
+        Espresso.onView(ViewMatchers.withId(R.id.activity_list_user_rv))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                    0,
+                    ViewActions.swipeLeft()
+                )
+            )
+        Espresso.onView(ViewMatchers.withId(R.id.activity_list_user_rv))
+            .check(ItemCount(currentUsersSize - 1))
+    }
+
+    //test de swap
+    @Test
+    fun checkIfSwapIsWorking() {
+        Espresso.onView(ViewMatchers.withId(R.id.activity_list_user_rv))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                    0,
+                    ViewActions.swipeDown()
+                )
+            )
+        Espresso.onView(ViewMatchers.withId(R.id.activity_list_user_rv))
+            .check(ItemCount(currentUsersSize))
+    }
+
 }
