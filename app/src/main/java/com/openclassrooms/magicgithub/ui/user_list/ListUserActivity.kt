@@ -11,6 +11,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.openclassrooms.magicgithub.R
 import com.openclassrooms.magicgithub.di.Injection.getRepository
 import com.openclassrooms.magicgithub.model.User
+import java.util.Collections
 
 class ListUserActivity : AppCompatActivity(), UserListAdapter.Listener {
     // FOR DESIGN ---
@@ -39,27 +40,45 @@ class ListUserActivity : AppCompatActivity(), UserListAdapter.Listener {
         adapter = UserListAdapter(this)
         recyclerView.adapter = adapter
 
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
             override fun onMove(
-                recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
-            ): Boolean = false
+            ): Boolean {
+                val fromPosition = viewHolder.adapterPosition
+                val toPosition = target.adapterPosition
+
+                // Mise à jour de la liste dans le repository
+                getRepository().moveUser(fromPosition, toPosition)
+
+                // Mise à jour de l'affichage
+                adapter.notifyItemMoved(fromPosition, toPosition)
+                return true
+            }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val user = adapter.getUserAt(position)
 
-                // Toggle the user's active state
-                user.isActive = !user.isActive
-                adapter.notifyItemChanged(position) // Refresh the view for this user
+                // Toggle de l'état actif/inactif
+                getRepository().toggleUserActiveState(user)
+                adapter.notifyItemChanged(position)
 
-                // Optionally, show a toast or update the database here
-                Toast.makeText(this@ListUserActivity, "User ${if (user.isActive) "Activated" else "Deactivated"}", Toast.LENGTH_SHORT).show()
+                // Affichage du toast
+                Toast.makeText(
+                    this@ListUserActivity,
+                    "User ${if (user.isActive) "Activated" else "Deactivated"}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
 
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
+
 
     private fun configureFab() {
         fab = findViewById(R.id.activity_list_user_fab)
@@ -79,4 +98,8 @@ class ListUserActivity : AppCompatActivity(), UserListAdapter.Listener {
         getRepository().deleteUser(user)
         loadData()
     }
+
+    //Gestion de l'ordonnancement des éléments de la liste en autorisant le déplacement des cellules.
+
+
 }
